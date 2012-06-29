@@ -108,7 +108,7 @@ int board_mmc_init(bd_t *bis)
 	return 0;
 }
 
-void spl_board_init(void)
+void __weak spl_board_init(void)
 {
 #ifdef CONFIG_SPL_NAND_SUPPORT
 	gpmc_init();
