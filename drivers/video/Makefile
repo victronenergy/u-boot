@@ -54,6 +54,10 @@ COBJS-$(CONFIG_VIDEO_SMI_LYNXEM) += smiLynxEM.o videomodes.o
 COBJS-$(CONFIG_VIDEO_TEGRA) += tegra.o
 COBJS-$(CONFIG_VIDEO_VCXK) += bus_vcxk.o
 
+ifdef CONFIG_SPL_BUILD
+COBJS-$(CONFIG_SPL_VIDEO_OMAP3) += omap3_dss.o
+endif
+
 COBJS	:= $(sort $(COBJS-y))
 SRCS	:= $(COBJS:.o=.c)
 OBJS	:= $(addprefix $(obj),$(COBJS))
