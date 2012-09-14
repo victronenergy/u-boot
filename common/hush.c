@@ -3192,12 +3192,12 @@ static int parse_stream_outer(struct in_str *inp, int flag)
 			code = run_list(ctx.list_head);
 			if (code == -2) {	/* exit */
 				b_free(&temp);
-				code = 0;
 				/* XXX hackish way to not allow exit from main loop */
 				if (inp->peek == file_peek) {
 					printf("exit not allowed from main input shell.\n");
 					continue;
 				}
+				flag |= FLAG_EXIT_FROM_LOOP;
 				break;
 			}
 			if (code == -1)
@@ -3222,6 +3222,8 @@ static int parse_stream_outer(struct in_str *inp, int flag)
 #ifndef __U_BOOT__
 	return 0;
 #else
+	if (code == -2)
+		return -2;
 	return (code != 0) ? 1 : 0;
 #endif /* __U_BOOT__ */
 }

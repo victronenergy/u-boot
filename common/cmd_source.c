@@ -174,6 +174,10 @@ do_source (cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 
 	printf ("## Executing script at %08lx\n", addr);
 	rcode = source (addr, fit_uname);
+	if (rcode == -2) {
+		debug("Hit exit in script\n");
+		rcode = 0;
+	}
 	return rcode;
 }
 

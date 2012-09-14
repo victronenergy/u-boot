@@ -1578,6 +1578,7 @@ int run_command_list(const char *cmd, int len, int flag)
 int do_run (cmd_tbl_t * cmdtp, int flag, int argc, char * const argv[])
 {
 	int i;
+	int ret;
 
 	if (argc < 2)
 		return CMD_RET_USAGE;
@@ -1590,7 +1591,11 @@ int do_run (cmd_tbl_t * cmdtp, int flag, int argc, char * const argv[])
 			return 1;
 		}
 
-		if (run_command(arg, flag) != 0)
+		ret = run_command(arg, flag);
+		/* in case we hit an exit in a script */
+		if (ret == -2)
+			return -2;
+		if (ret != 0)
 			return 1;
 	}
 	return 0;
