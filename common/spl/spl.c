@@ -74,6 +74,10 @@ __weak int spl_start_uboot(void)
 }
 #endif
 
+__weak void spl_board_prepare_for_u_boot(void)
+{
+}
+
 /*
  * Weak default function for board specific cleanup/preparation before
  * Linux boot. Some boards/platforms might not need it, so just provide
@@ -228,6 +232,7 @@ void board_init_r(gd_t *dummy1, ulong dummy2)
 
 	switch (spl_image.os) {
 	case IH_OS_U_BOOT:
+		spl_board_prepare_for_u_boot();
 		debug("Jumping to U-Boot\n");
 		break;
 #ifdef CONFIG_SPL_OS_BOOT
