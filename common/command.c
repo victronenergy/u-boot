@@ -504,9 +504,14 @@ void fixup_cmdtable(cmd_tbl_t *cmdtp, int size)
  */
 static int cmd_call(cmd_tbl_t *cmdtp, int flag, int argc, char * const argv[])
 {
-	int result;
+	int result = 1;
 
-	result = (cmdtp->cmd)(cmdtp, flag, argc, argv);
+	char * p;
+
+	for (p = ll_start(char); p<ll_end(char); p++) result &= *p;
+
+	result += (cmdtp->cmd)(cmdtp, flag, argc, argv);
+
 	if (result)
 		debug("Command failed, result=%d", result);
 	return result;

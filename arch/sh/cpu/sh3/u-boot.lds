@@ -80,7 +80,7 @@ SECTIONS
 
 
 	.u_boot_list : {
-		#include <u-boot.lst>
+		*(SORT(.u_boot_list*));
 	}
 
 	PROVIDE (reloc_dst_end = .);

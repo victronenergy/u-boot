@@ -62,11 +62,7 @@ $(nandobj)u-boot-spl:	$(OBJS) $(nandobj)u-boot-nand_spl.lds
 		-Map $(nandobj)u-boot-spl.map \
 		-o $(nandobj)u-boot-spl
 
-# The following line expands into whole rule which generates $(LSTSCRIPT),
-# the file containing u-boots LG-array linker section. This is included into
-# $(LDSCRIPT). The function make_u_boot_list is defined in helper.mk file.
-$(eval $(call make_u_boot_list, $(LSTSCRIPT), $(OBJS)))
-$(nandobj)u-boot-nand_spl.lds: $(LDSCRIPT) $(LSTSCRIPT)
+$(nandobj)u-boot-nand_spl.lds: $(LDSCRIPT)
 	$(CPP) $(CPPFLAGS) $(LDPPFLAGS) -I$(nandobj)/board/$(BOARDDIR) \
 		-ansi -D__ASSEMBLY__ -P - <$< >$@
 
