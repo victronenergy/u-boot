@@ -138,14 +138,10 @@ void omap3_dss_enable(void)
 	writel(l, &dispc->control);
 }
 
-#ifdef CONFIG_CFB_CONSOLE
-int __board_video_init(void)
+__weak int board_video_init(void)
 {
 	return -1;
 }
-
-int board_video_init(void)
-			__attribute__((weak, alias("__board_video_init")));
 
 void *video_hw_init(void)
 {
@@ -164,4 +160,3 @@ void *video_hw_init(void)
 
 	return pGD;
 }
-#endif
