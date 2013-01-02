@@ -25,6 +25,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc.
  */
+
 #include <common.h>
 #include <usb.h>
 #include <usb/ulpi.h>
@@ -142,8 +143,8 @@ int omap_ehci_hcd_stop(void)
 	debug("Resetting OMAP EHCI\n");
 	omap_ehci_phy_reset(1, 0);
 
-	if (omap_uhh_reset() < 0)
-		return -1;
+	//if (omap_uhh_reset() < 0)
+	//	return -1;
 
 	if (omap_ehci_tll_reset() < 0)
 		return -1;
