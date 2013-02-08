@@ -294,7 +294,6 @@ void spl_board_prepare_for_u_boot(void)
 	dcache_disable();
 }
 
-# ifdef CONFIG_NAND_BOOT
 int spl_start_uboot(void)
 {
 	int val = 0;
@@ -305,12 +304,6 @@ int spl_start_uboot(void)
 	}
 	return !val;
 }
-# else
-int spl_start_uboot(void)
-{
-	return 1;
-}
-# endif
 
 # ifdef CONFIG_SPL_BUILD
 void spl_board_init(void)
