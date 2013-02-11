@@ -121,8 +121,6 @@ void adjust_dss_timer(void)
 # define SIZE_X	480
 # define SIZE_Y	272
 
-# ifdef CONFIG_SPL_BUILD
-
 static struct panel_config panel = {
 	.timing_h	= DSS_HBP(45) | DSS_HFP(1) | DSS_HSW(1),
 	.timing_v	= DSS_VBP(16) | DSS_VFP(0) | DSS_VSW(1),
@@ -132,13 +130,17 @@ static struct panel_config panel = {
 	.data_lines	= 0x03,
 	.load_mode	= 0x02,
 	.panel_color	= 0x000000ff,
-	.frame_buffer	= (void *) CONFIG_FB_ADDR,
 };
+
+# ifdef CONFIG_SPL_BUILD
 
 static int load_splash(void)
 {
 	uint32_t src = CONFIG_SPLASH_SCREEN_NAND_OFF;
-	uint32_t *dst = (uint32_t *) CONFIG_FB_ADDR;
+	uint32_t *dst = (uint32_t *) gd->fb_base;
+
+	if (!dst)
+		return -1;
 
 	nand_spl_load_image(src, SIZE_X * SIZE_Y * 4, dst);
 
@@ -157,6 +159,7 @@ int board_video_init(void)
 	gpio_direction_output(DSP_POWER_GPIO, 1);
 
 	adjust_dss_timer();
+	panel.frame_buffer = (void *) gd->fb_base;
 	omap3_dss_panel_config(&panel);
 	omap3_dss_enable();
 	return load_splash();
@@ -165,13 +168,15 @@ int board_video_init(void)
 # else /* CONFIG_SPL_BUILD */
 int board_video_init(void)
 {
-	ulong *p = (ulong *) CONFIG_FB_ADDR;
+	ulong *p = (ulong *) gd->fb_base;
 	u32 n;
 	char *s;
 	ulong color;
 
+	panel.frame_buffer = (void *) gd->fb_base;
+	omap3_dss_panel_config(&panel);
+	omap3_dss_enable();
 	adjust_dss_timer();
-	gd->fb_base = CONFIG_FB_ADDR;
 
 	s = getenv("stdout");
 	if (s && strcmp(s, "vga") == 0)
@@ -231,6 +236,16 @@ int board_init(void)
 	gpio_direction_output(CONFIG_OMAP_EHCI_PHY1_RESET_GPIO, 1);
 
 	return 0;
+}
+
+/* position the framebuffer like linux */
+#define CONFIG_VIDEO_ALIGNMENT	(2 * 1024 * 1024)
+ulong video_setmem(ulong addr)
+{
+	addr -= SIZE_X * SIZE_Y * 4;
+	addr = ALIGN(addr - CONFIG_VIDEO_ALIGNMENT + 1, CONFIG_VIDEO_ALIGNMENT);
+
+	return addr;
 }
 
 int misc_init_r(void)
@@ -306,6 +321,7 @@ int spl_start_uboot(void)
 }
 
 # ifdef CONFIG_SPL_BUILD
+
 void spl_board_init(void)
 {
 	if (!spl_start_uboot()) {
