@@ -379,6 +379,16 @@ void board_init_f(ulong bootflag)
 #endif /* CONFIG_FB_ADDR */
 #endif /* CONFIG_LCD */
 
+#ifdef CONFIG_VIDEO
+#ifdef CONFIG_FB_ADDR
+	gd->fb_base = CONFIG_FB_ADDR;
+#else
+	/* reserve memory for video display (always full pages) */
+	addr = video_setmem(addr);
+	gd->fb_base = addr;
+#endif /* CONFIG_FB_ADDR */
+#endif /* CONFIG_VIDEO */
+
 	/*
 	 * reserve memory for U-Boot code, data & bss
 	 * round down to next 4 kB limit
