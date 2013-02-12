@@ -149,6 +149,8 @@ static int load_splash(void)
 
 int board_video_init(void)
 {
+	gd->fb_base = 0x8FE00000;
+
 	gpio_request(BACKLIGHT_ON_GPIO, "BKL_ON");
 	gpio_direction_output(BACKLIGHT_ON_GPIO, 0);
 
