@@ -65,7 +65,14 @@
 # define CONFIG_PREBOOT "usb start"
 #endif
 
-#define	CONFIG_EXTRA_ENV_SETTINGS	CONFIG_TAM3517_SETTINGS \
+#ifdef MTDPARTS_DEFAULT
+# undef MTDPARTS_DEFAULT
+#endif
+#define MTDPARTS_DEFAULT	"mtdparts=omap2-nand.0:512k(MLO),"\
+		"1m(u-boot),256k(env1),256k(env2),1m(u-boot2),256k(bootparms),"\
+		"768k(splash),6m(kernel),200m(data),-(rootfs)"
+
+#define	CONFIG_EXTRA_ENV_SETTINGS \
 	"mmcdev=0\0" \
 	"loadbootscript=fatload mmc ${mmcdev} 80004000 boot.scr\0" \
 	"bootcmd=" \
@@ -76,7 +83,9 @@
 				"source 80004000;" \
 			"fi;" \
 		"fi;" \
-		"run nandboot;" \
+		"run nandboot;\0" \
+		"loadaddr=80300000\0" \
+		"nandboot=nand read ${loadaddr} kernel && bootm ${loadaddr}\0"
 
 /* SPL OS boot options */
 #define CONFIG_CMD_SPL
