@@ -42,6 +42,7 @@
 #endif
 #include <asm/ehci-omap.h>
 #include <asm/arch/dss.h>
+#include <environment.h>
 #include "bpp3.h"
 
 DECLARE_GLOBAL_DATA_PTR;
@@ -300,7 +301,7 @@ int board_mmc_init(bd_t *bis)
 }
 #endif
 
-#ifdef CONFIG_SPL_OS_BOOT
+#ifdef CONFIG_SPL_BUILD
 void spl_board_prepare_for_linux(void)
 {
 	enable_lcd(1);
@@ -311,21 +312,93 @@ void spl_board_prepare_for_u_boot(void)
 	dcache_disable();
 }
 
+static char *find_variable(char const *str, char const *find_varname)
+{
+	int len = strlen(find_varname);
+	while (*str) {
+		if (strncmp(str, find_varname, len) == 0) {
+			debug("[find_variable] variable: %s\n", str);
+			return strchr(str, '=') + 1;
+		}
+		str += strlen(str) + 1; /* Next variable */
+	}
+	return NULL;
+}
+
+static int upd_mode_set(void)
+{
+	char *value = NULL;
+	unsigned char *env_data = NULL;
+	int crc_ok, crc_redund_ok;
+
+	/* load enviroment variables from nand and search for upd_mode */
+	env_t *ep = (env_t *)0x80300000; /* RAM buffer */
+	nand_spl_load_image(CONFIG_ENV_OFFSET, CONFIG_ENV_SIZE, ep);
+	debug("ep->crc: %08x\n", ep->crc);
+
+	/* RAM buffer */
+	env_t *ep_redund = (env_t *)(0x80300000 + CONFIG_ENV_SIZE);
+	nand_spl_load_image(CONFIG_ENV_OFFSET_REDUND, CONFIG_ENV_SIZE,
+				ep_redund);
+	debug("ep_redund->crc: %08x\n", ep_redund->crc);
+
+	crc_ok = crc32(0, ep->data, ENV_SIZE) == ep->crc;
+	crc_redund_ok = crc32(0, ep_redund->data, ENV_SIZE) == ep_redund->crc;
+
+	if (crc_ok && crc_redund_ok) {
+		if (ep->flags == 0 && ep_redund->flags == 255)
+			env_data = ep->data;
+		else if (ep->flags == 255 && ep_redund->flags == 0)
+			env_data = ep_redund->data;
+		else if (ep->flags > ep_redund->flags)
+			env_data = ep->data;
+		else if (ep->flags < ep_redund->flags)
+			env_data = ep_redund->data;
+	} else if (!crc_ok && crc_redund_ok) {
+		puts("!bad CRC\n");
+		env_data = ep_redund->data;
+	} else if (crc_ok && !crc_redund_ok) {
+		puts("!bad CRC_REDUND\n");
+		env_data = ep->data;
+	} else {
+		puts("!bad CRC and CRC_REDUND\n");
+	}
+
+	debug("ep->data: %08x\n", (unsigned int)ep->data);
+	debug("ep_redund->data: %08x\n", (unsigned int)ep_redund->data);
+	debug("env_data: %08x\n", (unsigned int)env_data);
+
+	if (env_data) {
+		value = find_variable((char *)env_data, "upd_mode");
+		if (value) {
+			debug("[upd_mode_set]value: %s\n", value);
+			if ((strlen(value) > 0) &&
+				 (strcmp(value, "none") != 0)) {
+				debug("[upd_mode_set] Boot u-boot!\n");
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
 int spl_start_uboot(void)
 {
 	int val = 0;
+
 	if (!gpio_request(CONFIG_SPL_OS_BOOT_KEY, "U-Boot key")) {
 		gpio_direction_input(CONFIG_SPL_OS_BOOT_KEY);
-		val = gpio_get_value(CONFIG_SPL_OS_BOOT_KEY);
+		val = !gpio_get_value(CONFIG_SPL_OS_BOOT_KEY);
 		gpio_free(CONFIG_SPL_OS_BOOT_KEY);
 	}
-	return !val;
+	val = val || upd_mode_set();
+	return val;
 }
-
-# ifdef CONFIG_SPL_BUILD
 
 void spl_board_init(void)
 {
+	gpmc_init();
+	nand_init();
 	if (!spl_start_uboot()) {
 		dram_init_banksize();
 
@@ -341,12 +414,11 @@ void spl_board_init(void)
 		enable_caches();
 	}
 
-	gpmc_init();
-	nand_init();
+
 
 #  ifdef CONFIG_VIDEO
 	board_video_init();
 #  endif
 }
-# endif
 #endif
+
