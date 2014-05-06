@@ -44,6 +44,23 @@
 #define CONFIG_SYS_PROMPT		"bpp3=> "
 #define CONFIG_CMD_SETEXPR
 
+/*
+ * Since the console can also be used by external devices, the
+ * U-boot autoboot will be prevented if any character is transmitted
+ * during the bootdelay. This prevents for example the system recovery
+ * from being properly executed. Hence the bootdelay is completely
+ * disabled unless the left function keys is pressed. So only by pressing
+ * the left button and the left function button the u-boot shell can now
+ * be reached. The former to load u-boot at all, the latter to not start the
+ * autoboot directly.
+ */
+#define CONFIG_PREBOOT					\
+		"if gpio input 26; then " 		\
+			"setenv bootdelay -1; " 	\
+		"else "					\
+			"setenv bootdelay 0; " 		\
+		"fi"
+
 #define CONFIG_OMAP3_GPIO_2
 
 #define CONFIG_VIDEO
