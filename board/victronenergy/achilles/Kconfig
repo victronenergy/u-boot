@@ -1,0 +1,15 @@
+if TARGET_ACHILLES
+
+config SYS_BOARD
+	default "achilles"
+
+config SYS_VENDOR
+       default "victronenergy"
+
+config SYS_SOC
+	default "mx6"
+
+config SYS_CONFIG_NAME
+	default "achilles"
+
+endif

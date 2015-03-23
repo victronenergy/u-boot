@@ -1,0 +1,7 @@
+MGUI BOARD
+M:	Jeroen Hofstee <jhofstee@victronenergy.com>
+S:	Maintained
+F:	board/victronenergy/
+F:	include/configs/achilles.h
+F:	configs/achilles_defconfig
+
