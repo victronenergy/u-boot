@@ -23,7 +23,7 @@
 
 include $(TOPDIR)/config.mk
 
-HOSTSRCS := $(SRCTREE)/lib/crc32.c  fw_env.c  fw_env_main.c
+HOSTSRCS := $(SRCTREE)/lib/crc32.c fw_env.c
 HOSTSRCS += $(SRCTREE)/lib/ctype.c $(SRCTREE)/lib/linux_string.c
 HOSTSRCS += $(SRCTREE)/common/env_attr.c $(SRCTREE)/common/env_flags.c
 HEADERS	:= fw_env.h $(OBJTREE)/include/config.h
@@ -40,11 +40,15 @@ ifeq ($(MTD_VERSION),old)
 HOSTCPPFLAGS += -DMTD_OLD
 endif
 
-all:	$(obj)fw_printenv
+all:   $(obj)fw_printenv
+
+$(obj)libubootenv.a: $(HOSTSRCS) $(HEADERS)
+	$(HOSTCC) -c $(HOSTCFLAGS_NOPED) $(HOSTLDFLAGS) $(HOSTSRCS)
+	ar cr $@ $(notdir $(HOSTSRCS:.c=.o))
 
 # Some files complain if compiled with -pedantic, use HOSTCFLAGS_NOPED
-$(obj)fw_printenv:	$(HOSTSRCS) $(HEADERS)
-	$(HOSTCC) $(HOSTCFLAGS_NOPED) $(HOSTLDFLAGS) -o $@ $(HOSTSRCS)
+$(obj)fw_printenv: fw_env_main.c $(obj)libubootenv.a
+	$(HOSTCC) $(HOSTCFLAGS_NOPED) $(HOSTLDFLAGS) -o $@ fw_env_main.c $(obj)libubootenv.a
 	$(HOSTSTRIP) $@
 
 clean:
