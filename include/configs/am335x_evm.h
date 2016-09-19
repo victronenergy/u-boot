@@ -437,6 +437,7 @@
 #define CONFIG_PHY_GIGE
 #define CONFIG_PHYLIB
 #define CONFIG_PHY_SMSC
+#define CONFIG_PHY_ATHEROS
 
 /*
  * NOR Size = 16 MiB

@@ -459,7 +459,7 @@ void sdram_init(void)
 	if (board_is_evm_sk(&header))
 		config_ddr(303, &ioregs_evmsk, &ddr3_data,
 			   &ddr3_cmd_ctrl_data, &ddr3_emif_reg_data, 0);
-	else if (board_is_bone_lt(&header))
+	else if (board_is_bone_lt(&header) || board_is_bone_lt_enhanced(&header))
 		config_ddr(400, &ioregs_bonelt,
 			   &ddr3_beagleblack_data,
 			   &ddr3_beagleblack_cmd_ctrl_data,
@@ -504,9 +504,22 @@ int board_late_init(void)
 	safe_string[sizeof(header.name)] = 0;
 	setenv("board_name", safe_string);
 
-	strncpy(safe_string, (char *)header.version, sizeof(header.version));
-	safe_string[sizeof(header.version)] = 0;
-	setenv("board_rev", safe_string);
+	/* BeagleBone Green eeprom, board_rev: 0x1a 0x00 0x00 0x00 */
+	if ( (header.version[0] == 0x1a) && (header.version[1] == 0x00) &&
+	     (header.version[2] == 0x00) && (header.version[3] == 0x00) ) {
+		setenv("board_rev", "BBG1");
+	} else if ( (header.version[0] == 0x30) && (header.version[1] == 0x30) &&
+	            (header.version[2] == 0x41) && (header.version[3] == 0x35) ) {
+		setenv("board_rev", "SE0A");
+		header.version[0] = 0x53;
+		header.version[1] = 0x45;
+		header.version[2] = 0x30;
+		header.version[3] = 0x41;
+	} else {
+		strncpy(safe_string, (char *)header.version, sizeof(header.version));
+		safe_string[sizeof(header.version)] = 0;
+		setenv("board_rev", safe_string);
+	}
 #endif
 
 	return 0;
@@ -616,7 +629,7 @@ int board_eth_init(bd_t *bis)
 	if (read_eeprom(&header) < 0)
 		puts("Could not get board ID.\n");
 
-	if (board_is_bone(&header) || board_is_bone_lt(&header) ||
+	if (board_is_bone(&header) || (board_is_bone_lt(&header) && !board_is_bone_lt_enhanced(&header)) ||
 	    board_is_idk(&header)) {
 		writel(MII_MODE_ENABLE, &cdev->miisel);
 		cpsw_slaves[0].phy_if = cpsw_slaves[1].phy_if =
@@ -646,7 +659,7 @@ int board_eth_init(bd_t *bis)
 #define AR8051_DEBUG_RGMII_CLK_DLY_REG	0x5
 #define AR8051_RGMII_TX_CLK_DLY		0x100
 
-	if (board_is_evm_sk(&header) || board_is_gp_evm(&header)) {
+	if (board_is_evm_sk(&header) || board_is_gp_evm(&header) || board_is_bone_lt_enhanced(&header)) {
 		const char *devname;
 		devname = miiphy_get_current_dev();
 
