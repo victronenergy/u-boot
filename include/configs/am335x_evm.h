@@ -169,11 +169,17 @@
 	DFUARGS
 #endif
 
+#define CONFIG_PREBOOT \
+	"gpio set 56; gpio clear 115"
+
 #define CONFIG_BOOTCOMMAND \
 	"run findfdt; " \
 	"run mmcboot;" \
 	"setenv mmcdev 1; " \
 	"setenv bootpart 1:2; " \
+	"gpio set 55; " \
+	"gpio set 115; " \
+	"gpio clear 113; " \
 	"run mmcboot;" \
 	"run nandboot;"
 
