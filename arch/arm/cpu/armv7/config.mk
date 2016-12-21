@@ -26,6 +26,7 @@ PLATFORM_RELFLAGS += -fno-common -ffixed-r8 -msoft-float
 # supported by more tool-chains
 PF_CPPFLAGS_ARMV7 := $(call cc-option, -march=armv7-a, -march=armv5)
 PLATFORM_CPPFLAGS += $(PF_CPPFLAGS_ARMV7)
+PLATFORM_CPPFLAGS += $(PF_NO_UNALIGNED)
 
 # =========================================================================
 #
