@@ -169,8 +169,14 @@
 	DFUARGS
 #endif
 
+/*
+ * gpio 53..56 -> leds on the beaglebone enhanched -> 1 = on
+ * gpio 49 -> green led on victronenergy cape -> 0 = on
+ * gpio 115 -> red led on victronenergy cape -> 0 = on
+ */
+
 #define CONFIG_PREBOOT \
-	"gpio set 56; gpio clear 115"
+	"gpio set 56; gpio set 49; gpio clear 115"
 
 #define CONFIG_BOOTCOMMAND \
 	"run findfdt; " \
@@ -179,7 +185,7 @@
 	"setenv bootpart 1:2; " \
 	"gpio set 55; " \
 	"gpio set 115; " \
-	"gpio clear 113; " \
+	"gpio clear 49; " \
 	"run mmcboot;" \
 	"run nandboot;"
 
