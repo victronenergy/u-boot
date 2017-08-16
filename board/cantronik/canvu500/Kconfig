@@ -1,0 +1,15 @@
+if TARGET_CANVU500
+
+config SYS_BOARD
+	default "canvu500"
+
+config SYS_VENDOR
+	default "cantronik"
+
+config SYS_SOC
+	default "mx6"
+
+config SYS_CONFIG_NAME
+	default "canvu500"
+
+endif
