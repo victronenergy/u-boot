@@ -480,6 +480,12 @@ struct src {
 #define SRC_SCR_M4C_NON_SCLR_RST_OFFSET         4
 #define SRC_SCR_M4C_NON_SCLR_RST_MASK           (1 << 4)
 
+#define SRC_SBMR2_BMOD_MASK			(3 << 24)
+#define SRC_SBMR2_BMOD_SHIFT			24
+#define SRC_SBMR2_BMOD_FUSES			0x0
+#define SRC_SBMR2_BMOD_SERIAL			0x1
+#define SRC_SBMR2_BMOD_INT			0x2
+
 /* GPR1 bitfields */
 #define IOMUXC_GPR1_APP_CLK_REQ_N		BIT(30)
 #define IOMUXC_GPR1_PCIE_EXIT_L1		BIT(28)
