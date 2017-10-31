@@ -179,7 +179,7 @@ static int setup_fec(void)
 	gpio_direction_output(ETH_PHY_RESET, 0);
 
 	/* Required to avoid system reset on cold boot */
-	mdelay(10);
+	mdelay(100);
 
 	/* Power up PHY */
 	gpio_direction_output(ETH_PHY_POWER, 0);
