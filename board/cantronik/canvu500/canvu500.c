@@ -91,7 +91,7 @@ int board_mmc_init(bd_t *bis)
 			PAD_CTL_SRE_FAST)
 #define GPMI_PAD_CTRL2 (GPMI_PAD_CTRL0 | GPMI_PAD_CTRL1)
 
-iomux_v3_cfg_t gpmi_pads[] = {
+static const iomux_v3_cfg_t gpmi_pads[] = {
 	MX6_PAD_NAND_CLE__RAWNAND_CLE		| MUX_PAD_CTRL(GPMI_PAD_CTRL2),
 	MX6_PAD_NAND_ALE__RAWNAND_ALE		| MUX_PAD_CTRL(GPMI_PAD_CTRL2),
 	MX6_PAD_NAND_WP_B__RAWNAND_WP_B		| MUX_PAD_CTRL(GPMI_PAD_CTRL2),
@@ -135,7 +135,7 @@ static void setup_gpmi_nand(void)
 #define ETH_PHY_POWER	IMX_GPIO_NR(1, 13)
 #define ETH_PHY_RESET	IMX_GPIO_NR(2, 17)
 
-static iomux_v3_cfg_t const fec1_pads[] = {
+static const iomux_v3_cfg_t fec1_pads[] = {
 	MX6_PAD_GPIO1_IO05__ENET1_REF_CLK1	| MUX_PAD_CTRL(ENET_PAD_CTRL) |
 						  MUX_MODE_SION,
 	MX6_PAD_ENET1_MDC__ENET1_MDC		| MUX_PAD_CTRL(ENET_PAD_CTRL),
