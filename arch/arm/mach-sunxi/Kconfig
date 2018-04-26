@@ -402,6 +402,7 @@ config SYS_CLK_FREQ
 	default 1008000000 if MACH_SUN9I
 
 config SYS_CONFIG_NAME
+	string "Board configuration name"
 	default "sun4i" if MACH_SUN4I
 	default "sun5i" if MACH_SUN5I
 	default "sun6i" if MACH_SUN6I
