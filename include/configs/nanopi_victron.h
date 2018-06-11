@@ -56,7 +56,7 @@
 		"setenv bootdir /boot; "\
 		"run setroot loadfdt loadimage mmcargs && " \
 			"bootz ${kernel_addr_r} - ${fdt_addr_r}\0" \
-	"bootcmd=run setfdt boot_mmc${mmc_bootdev}\0"
+	"boot_mmc_auto=run boot_mmc${mmc_bootdev}\0"
 #endif	/* !CONFIG_SPL_BUILD */
 
 #endif
