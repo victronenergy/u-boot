@@ -723,13 +723,15 @@ static void setup_environment(const void *fdt)
 int misc_init_r(void)
 {
 	__maybe_unused int ret;
-	uint boot;
+	uint boot = sunxi_get_boot_device();
+
+	if (boot == BOOT_DEVICE_MMC1)
+		set_default_env(NULL);
 
 	env_set("fel_booted", NULL);
 	env_set("fel_scriptaddr", NULL);
 	env_set("mmc_bootdev", NULL);
 
-	boot = sunxi_get_boot_device();
 	/* determine if we are running in FEL mode */
 	if (boot == BOOT_DEVICE_BOARD) {
 		env_set("fel_booted", "1");
