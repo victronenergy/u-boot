@@ -64,6 +64,11 @@
 #define CONFIG_MXC_USB_FLAGS		0
 #define CONFIG_USB_MAX_CONTROLLER_COUNT	2
 
+#ifdef CONFIG_VIDEO
+#define CONFIG_VIDEO_MXS
+#define MXS_LCDIF_BASE MX6SX_LCDIF1_BASE_ADDR
+#endif
+
 #define CONFIG_BOOTCOMMAND "run recovercmd; run setroot setargs ubiboot"
 
 #define CONFIG_ENV_VARS_UBOOT_CONFIG
@@ -73,7 +78,7 @@
 	"mtdids=" CONFIG_MTDIDS_DEFAULT "\0"				\
 	"mtdparts=" CONFIG_MTDPARTS_DEFAULT "\0"			\
 	"netboot=dhcp ${board}/fitImage && bootm\0"			\
-	"recovercmd=test ${recovery} = 1 && run usbboot\0"		\
+	"recovercmd=test ${recovery} = 1 && setenv stdout serial,vga && run usbboot\0" \
 	"rdaddr=0x88000000\0"						\
 	"setargs=setenv bootargs ${bootargs} "				\
 		"console=${console},${baudrate} "			\
@@ -82,6 +87,7 @@
 	"setroot=setenv root ubi0:rootfs${swversion}\0"			\
 	"swversion=1\0"							\
 	"ubiboot=ubi part ubi && ubifsmount ${root} && ubifsload ${loadaddr} boot/fitImage && bootm\0" \
-	"usbboot=usb reset && load usb 0 ${loadaddr} boot.scr && source ${loadaddr}; sleep 2; run usbboot\0"
+	"usbboot=usb reset && load usb 0 ${loadaddr} boot.scr && source ${loadaddr}; sleep 2; run usbboot\0" \
+	"videomode=video=ctfb:x:800,y:480,depth:24,pclk:37037,le:40,ri:60,up:10,lo:10,hs:20,vs:10,sync:0,vmode:0\0"
 
 #endif				/* __CONFIG_H */
