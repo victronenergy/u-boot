@@ -19,9 +19,12 @@
 #include <environment.h>
 #include <fsl_esdhc.h>
 #include <mmc.h>
+#include <nand.h>
 #include <miiphy.h>
 #include <netdev.h>
+#include <splash.h>
 #include <usb.h>
+#include <video.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -304,7 +307,31 @@ static int setup_lcd(void)
 
 	return 0;
 }
+
+#ifdef CONFIG_SPLASH_SCREEN
+int splash_screen_prepare(void)
+{
+	struct mtd_info *mtd;
+	size_t load_size = SPLASH_NAND_SIZE;
+	u32 load_addr = SPLASH_LOAD_ADDR;
+
+	mtd = get_nand_dev_by_index(0);
+	if (!mtd)
+		return -ENODEV;
+
+	return nand_read_skip_bad(mtd, SPLASH_NAND_OFFS, &load_size,
+				  NULL, mtd->size, (u_char *)load_addr);
+}
+
+int board_video_skip(void)
+{
+	env_set_hex("splashimage", SPLASH_LOAD_ADDR);
+
+	return 0;
+}
 #endif
+
+#endif	/* CONFIG_VIDEO_MXS */
 
 int board_early_init_f(void)
 {
@@ -346,6 +373,7 @@ int board_late_init(void)
 	if (bmode == SRC_SBMR2_BMOD_SERIAL || !gpio_get_value(ATTN_BTN)) {
 		set_default_env(NULL);
 		env_set("recovery", "1");
+		video_clear();
 	} else {
 		env_set("recovery", "0");
 	}
