@@ -25,6 +25,7 @@
 #include <splash.h>
 #include <usb.h>
 #include <video.h>
+#include <watchdog.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -344,6 +345,10 @@ int board_init(void)
 {
 	/* address of boot parameters */
 	gd->bd->bi_boot_params = PHYS_SDRAM + 0x100;
+
+#ifdef CONFIG_HW_WATCHDOG
+	hw_watchdog_init();
+#endif
 
 #ifdef CONFIG_NAND_MXS
 	setup_gpmi_nand();
