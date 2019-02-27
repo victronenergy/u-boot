@@ -95,8 +95,8 @@
 		"console=${console},${baudrate} "			\
 		"${mtdparts} ubi.mtd=ubi "				\
 		"root=${root} rootfstype=ubifs ${runlevel}\0"		\
-	"setroot=setenv root ubi0:rootfs${swversion}\0"			\
-	"swversion=1\0"							\
+	"setroot=setenv root ubi0:rootfs${version}\0"			\
+	"version=1\0"							\
 	"ubiboot=ubi part ubi && ubifsmount ${root} && ubifsload ${loadaddr} boot/fitImage && bootm\0" \
 	"usbboot=usb reset && load usb 0 ${loadaddr} boot.scr && source ${loadaddr}; sleep 2; run usbboot\0" \
 	"videomode=video=ctfb:x:800,y:480,depth:24,pclk:37037,le:40,ri:60,up:10,lo:10,hs:20,vs:10,sync:0,vmode:0\0"
