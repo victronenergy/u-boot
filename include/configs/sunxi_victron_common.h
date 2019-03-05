@@ -24,7 +24,8 @@
 	"bootfile=zImage\0" \
 	"fdtfile=" CONFIG_DEFAULT_DEVICE_TREE ".dtb\0" \
 	"ramdiskfile=initramfs\0" \
-	"setfdt=" VICTRON_ID_CMD "\0" \
+	VICTRON_ID_TABLE \
+	"setfdt=run board_${board_id} || echo unknown board_id ${board_id}\0" \
 	"setroot=" \
 		"if test \"${version}\" = 1; then " \
 			"setenv bootpart 1:2; " \
@@ -33,8 +34,10 @@
 			"setenv bootpart 1:3; " \
 			"setenv mmcroot /dev/mmcblk1p3; " \
 		"fi\0" \
+	"setmodel=" \
+		"if env exists model; then fdt addr $fdt_addr_r; fdt set / model \"$model\"; else true; fi\0" \
 	"loadfdt=" \
-		"load mmc ${bootpart} ${fdt_addr_r} ${bootdir}/${fdtfile}\0" \
+		"load mmc ${bootpart} ${fdt_addr_r} ${bootdir}/${fdtfile}; run setmodel\0" \
 	"loadimage=" \
 		"load mmc ${bootpart} ${kernel_addr_r} ${bootdir}/${bootfile}\0" \
 	"loadramdisk=" \
