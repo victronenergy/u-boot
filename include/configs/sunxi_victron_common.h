@@ -43,7 +43,7 @@
 	"loadramdisk=" \
 		"load mmc ${bootpart} ${ramdisk_addr_r} ${bootdir}/${ramdiskfile}\0" \
 	"mmcargs=" \
-		"setenv bootargs console=${console} root=${mmcroot} rootwait ro rootfstype=ext4\0" \
+		"setenv bootargs console=${console} root=${mmcroot} rootwait ro rootfstype=ext4 ${runlevel}\0" \
 	"boot_mmc0=" \
 		"setenv bootpart 0:1; " \
 		"load mmc ${bootpart} ${scriptaddr} boot.scr && " \
