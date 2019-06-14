@@ -60,7 +60,7 @@ static int read_eeprom(struct am335x_baseboard_id *header)
 		return -EIO;
 	}
 
-	if (header->magic != 0xEE3355AA) {
+	if (header->magic != HDR_MAGIC) {
 		/*
 		 * read the eeprom using i2c again,
 		 * but use only a 1 byte address
@@ -72,7 +72,7 @@ static int read_eeprom(struct am335x_baseboard_id *header)
 			return -EIO;
 		}
 
-		if (header->magic != 0xEE3355AA) {
+		if (header->magic != HDR_MAGIC) {
 			printf("Incorrect magic number (0x%x) in EEPROM\n",
 					header->magic);
 			return -EINVAL;

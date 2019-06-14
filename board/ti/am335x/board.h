@@ -19,6 +19,7 @@
 #define HDR_NO_OF_MAC_ADDR	3
 #define HDR_ETH_ALEN		6
 #define HDR_NAME_LEN		8
+#define HDR_MAGIC		0xee3355aa
 
 struct am335x_baseboard_id {
 	unsigned int  magic;
