@@ -37,6 +37,9 @@ static inline int board_is_bone(struct am335x_baseboard_id *header)
 
 static inline int board_is_bone_lt(struct am335x_baseboard_id *header)
 {
+	if (header->magic != HDR_MAGIC)
+		return 1;
+
 	return !strncmp(header->name, "A335BNLT", HDR_NAME_LEN);
 }
 
