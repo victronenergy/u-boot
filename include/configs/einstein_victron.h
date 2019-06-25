@@ -6,6 +6,6 @@
 
 #define VICTRON_ID_EEPROM_BUS 1
 #define VICTRON_ID_TABLE \
-	"board_32584556=setenv fdtfile sun7i-a20-einstein-ccgx2.dtb\0"
+	"board_42434556=setenv fdtfile sun7i-a20-einstein-ccgx2.dtb\0"
 
 #endif
