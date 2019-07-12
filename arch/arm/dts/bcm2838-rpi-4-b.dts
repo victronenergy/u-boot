@@ -30,21 +30,17 @@
 	status = "okay";
 };
 
-/* SDHCI is used to control the SDIO for wireless */
 &sdhci {
-	pinctrl-names = "default";
-	pinctrl-0 = <&emmc_gpio34>;
-	status = "okay";
-	bus-width = <4>;
-	non-removable;
+	status = "disabled";
 };
 
-/* SDHOST is used to drive the SD card */
 &sdhost {
-	pinctrl-names = "default";
-	pinctrl-0 = <&sdhost_gpio48>;
+	status = "disabled";
+};
+
+&emmc2 {
+	compatible = "brcm,bcm2835-sdhci";
 	status = "okay";
-	bus-width = <4>;
 };
 
 &gpio {
