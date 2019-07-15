@@ -39,7 +39,7 @@
 };
 
 &emmc2 {
-	compatible = "brcm,bcm2835-sdhci";
+	compatible = "brcm,bcm2711-emmc2";
 	status = "okay";
 };
 
