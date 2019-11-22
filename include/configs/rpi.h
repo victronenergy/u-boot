@@ -73,7 +73,6 @@
 /* Environment */
 #define CONFIG_ENV_SIZE			SZ_16K
 #define CONFIG_SYS_LOAD_ADDR		0x1000000
-#define CONFIG_PREBOOT			"usb start"
 
 /* Shell */
 
@@ -87,14 +86,6 @@
 	"stdin=serial,usbkbd\0" \
 	"stdout=serial,vidconsole\0" \
 	"stderr=serial,vidconsole\0"
-
-#ifdef CONFIG_ARM64
-#define FDT_HIGH "ffffffffffffffff"
-#define INITRD_HIGH "ffffffffffffffff"
-#else
-#define FDT_HIGH "ffffffff"
-#define INITRD_HIGH "ffffffff"
-#endif
 
 /*
  * Memory layout for where various images get loaded by boot scripts:
@@ -137,54 +128,17 @@
  * only 64M, the remaining 25M starting at 0x02700000 should allow quite
  * large initrds before they start colliding with U-Boot.
  */
-#define ENV_MEM_LAYOUT_SETTINGS \
-	"fdt_high=" FDT_HIGH "\0" \
-	"initrd_high=" INITRD_HIGH "\0" \
-	"kernel_addr_r=0x00080000\0" \
-	"scriptaddr=0x02400000\0" \
-	"pxefile_addr_r=0x02500000\0" \
-	"fdt_addr_r=0x02600000\0" \
-	"ramdisk_addr_r=0x02700000\0"
-
-#if CONFIG_IS_ENABLED(CMD_MMC)
-	#define BOOT_TARGET_MMC(func) \
-		func(MMC, mmc, 0) \
-		func(MMC, mmc, 1)
-#else
-	#define BOOT_TARGET_MMC(func)
-#endif
-
-#if CONFIG_IS_ENABLED(CMD_USB)
-	#define BOOT_TARGET_USB(func) func(USB, usb, 0)
-#else
-	#define BOOT_TARGET_USB(func)
-#endif
-
-#if CONFIG_IS_ENABLED(CMD_PXE)
-	#define BOOT_TARGET_PXE(func) func(PXE, pxe, na)
-#else
-	#define BOOT_TARGET_PXE(func)
-#endif
-
-#if CONFIG_IS_ENABLED(CMD_DHCP)
-	#define BOOT_TARGET_DHCP(func) func(DHCP, dhcp, na)
-#else
-	#define BOOT_TARGET_DHCP(func)
-#endif
-
-#define BOOT_TARGET_DEVICES(func) \
-	BOOT_TARGET_MMC(func) \
-	BOOT_TARGET_USB(func) \
-	BOOT_TARGET_PXE(func) \
-	BOOT_TARGET_DHCP(func)
-
-#include <config_distro_bootcmd.h>
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
-	"dhcpuboot=usb start; dhcp u-boot.uimg; bootm\0" \
-	ENV_DEVICE_SETTINGS \
-	ENV_MEM_LAYOUT_SETTINGS \
-	BOOTENV
+	"fdt_high=3000000\0" \
+	"kernel_addr_r=0x00080000\0" \
+	"set_args=fdt addr ${fdt_addr} && fdt get value bootargs /chosen bootargs && " \
+		"setenv bootargs \"${bootargs} root=${mmcroot} rootwait\"\0" \
+	"set_root=if test \"${version}\" = 2; then setenv bootpart 0:3; setenv mmcroot /dev/mmcblk0p3; " \
+		"else setenv bootpart 0:2; setenv mmcroot /dev/mmcblk0p2; fi\0" \
+	"load=ext2load mmc ${bootpart} ${kernel_addr_r} /boot/zImage\0" \
+	"do_boot=bootz ${kernel_addr_r} - ${fdt_addr}\0"
 
+#define CONFIG_BOOTCOMMAND "run set_root set_args load do_boot"
 
 #endif
