@@ -514,7 +514,7 @@ int fw_env_flush(struct env_opts *opts)
 	*environment.crc = crc32(0, (uint8_t *) environment.data, ENV_SIZE);
 
 	/* write environment back to flash */
-	if (flash_io(O_RDWR)) {
+	if (flash_io(O_RDWR | O_CREAT)) {
 		fprintf(stderr, "Error: can't write fw_env to flash\n");
 		return -1;
 	}
@@ -1362,7 +1362,7 @@ static int flash_io(int mode)
 		return -1;
 	}
 
-	if (mode == O_RDWR) {
+	if (mode & O_RDWR) {
 		rc = flash_io_write(fd_current);
 	} else {
 		rc = flash_read(fd_current);
@@ -1428,8 +1428,10 @@ int fw_env_open(struct env_opts *opts)
 
 	dev_current = 0;
 	if (flash_io(O_RDONLY)) {
-		ret = -EIO;
-		goto open_cleanup;
+		fprintf(stderr, "Warning: Open failed, using default environment\n");
+		memcpy(environment.data, default_environment,
+			sizeof(default_environment));
+		dev_current = 0;
 	}
 
 	crc0 = crc32(0, (uint8_t *)environment.data, ENV_SIZE);
@@ -1597,7 +1599,8 @@ static int check_device_config(int dev)
 	if (fd < 0) {
 		fprintf(stderr,
 			"Cannot open %s: %s\n", DEVNAME(dev), strerror(errno));
-		return -1;
+		// Fine in case of a file, it will be created..
+		return 0;
 	}
 
 	rc = fstat(fd, &st);
