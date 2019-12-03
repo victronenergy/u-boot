@@ -141,4 +141,8 @@
 
 #define CONFIG_BOOTCOMMAND "run set_root set_args load do_boot"
 
+#define CONFIG_SYS_MMC_ENV_DEV 0
+#define CONFIG_ENV_OFFSET              (128 * SZ_1K)
+#define CONFIG_ENV_OFFSET_REDUND       (CONFIG_ENV_OFFSET + CONFIG_ENV_SIZE)
+
 #endif
