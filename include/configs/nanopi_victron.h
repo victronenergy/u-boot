@@ -10,6 +10,7 @@
 	"board_504d4556=setenv fdtfile sun8i-h3-nanopi-easysolar.dtb; setenv model MultiPlus-II\0" \
 	"board_39534556=setenv fdtfile sun8i-h3-nanopi-easysolar-a9.dtb\0" \
 	"board_39504d56=setenv fdtfile sun8i-h3-nanopi-easysolar-a9.dtb; setenv model MultiPlus-II\0" \
+	"board_41534556=setenv fdtfile sun8i-h3-nanopi-easysolar-a10.dtb\0" \
 	"board_584d4556=setenv fdtfile sun8i-h3-nanopi-maxi-gx.dtb\0" \
 	"board_39584d56=setenv fdtfile sun8i-h3-nanopi-maxi-gx-a9.dtb\0" \
 	"board_47504556=setenv fdtfile sun8i-h3-nanopi-paygo.dtb\0" \
