@@ -3,6 +3,9 @@
 
 #define CONFIG_ENV_OFFSET_REDUND (CONFIG_ENV_OFFSET + CONFIG_ENV_SIZE)
 
+#define VICTRON_ID_EEPROM_DT \
+	"i2c" __stringify(VICTRON_ID_EEPROM_BUS) "/eeprom@50"
+
 /*
  * Load the board ID from eeprom.  If booting from uSD card, let the
  * 'board_id' file override if it exists.
@@ -35,15 +38,19 @@
 			"setenv mmcroot /dev/mmcblk1p3; " \
 		"fi\0" \
 	"setmodel=" \
-		"if env exists model; then fdt addr $fdt_addr_r; fdt set / model \"$model\"; else true; fi\0" \
+		"if env exists model; then fdt set / model \"$model\"; else true; fi\0" \
 	"loadfdt=" \
-		"load mmc ${bootpart} ${fdt_addr_r} ${bootdir}/${fdtfile}; run setmodel\0" \
+		"load mmc ${bootpart} ${fdt_addr_r} ${bootdir}/${fdtfile}; fdt addr $fdt_addr_r; run setmodel\0" \
 	"loadimage=" \
 		"load mmc ${bootpart} ${kernel_addr_r} ${bootdir}/${bootfile}\0" \
 	"loadramdisk=" \
 		"load mmc ${bootpart} ${ramdisk_addr_r} ${bootdir}/${ramdiskfile}\0" \
 	"mmcargs=" \
 		"setenv bootargs console=${console} root=${mmcroot} rootwait ro rootfstype=ext4 ${runlevel}\0" \
+	"testmode=" \
+		"if test \"${runlevel}\" = 4; then " \
+			"fdt rm " VICTRON_ID_EEPROM_DT " read-only; " \
+		"else true; fi\0" \
 	"boot_mmc0=" \
 		"setenv bootpart 0:1; " \
 		"load mmc ${bootpart} ${scriptaddr} boot.scr && " \
@@ -51,7 +58,7 @@
 		"run boot_mmc1\0" \
 	"boot_mmc1=" \
 		"setenv bootdir /boot; "\
-		"run setroot loadfdt loadimage mmcargs && " \
+		"run setroot loadfdt loadimage mmcargs testmode && " \
 			"bootz ${kernel_addr_r} - ${fdt_addr_r}\0" \
 	"boot_mmc_auto=run boot_mmc${mmc_bootdev}\0"
 #endif	/* !CONFIG_SPL_BUILD */
