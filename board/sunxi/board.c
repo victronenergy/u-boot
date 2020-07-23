@@ -29,6 +29,7 @@
 #include <crc.h>
 #include <environment.h>
 #include <linux/libfdt.h>
+#include <i2c.h>
 #include <nand.h>
 #include <net.h>
 #include <spl.h>
@@ -652,6 +653,72 @@ static void parse_spl_header(const uint32_t spl_addr)
 	env_set_hex("fel_scriptaddr", spl->fel_script_address);
 }
 
+struct victron_eeprom_v1 {
+	u8 format_version;
+	__be16 product_id;
+	__be16 hw_rev;
+	u8 part_number[16];
+	u8 serial_number[12];
+	u8 wpa_psk[12];
+	u8 installer_version[24];
+	u8 eth_addr[6];
+	__be32 crc32;
+} __packed;
+
+static int parse_victron_eeprom(void)
+{
+	struct victron_eeprom_v1 id;
+	unsigned int val;
+	int crc;
+	int err;
+
+#ifdef CONFIG_DM_I2C
+	struct udevice *dev;
+
+	err = i2c_get_chip_for_busnum(VICTRON_ID_EEPROM_BUS,
+				      VICTRON_ID_EEPROM_ADDR,
+				      1, &dev);
+	if (err)
+		return err;
+
+	err = dm_i2c_read(dev, VICTRON_ID_EEPROM_OFFS,
+			  (uint8_t *)&id, sizeof(id));
+	if (err)
+		return err;
+#else
+	err = i2c_set_bus_num(VICTRON_ID_EEPROM_BUS);
+	if (err)
+		return err;
+
+	err = i2c_read(VICTRON_ID_EEPROM_ADDR, VICTRON_ID_EEPROM_OFFS, 1,
+		       (uint8_t *)&id, sizeof(id));
+	if (err)
+		return err;
+#endif
+
+	if (id.format_version != 1)
+		return -EINVAL;
+
+	crc = crc32(0, (unsigned char *)&id,
+		    offsetof(struct victron_eeprom_v1, crc32));
+
+	if (crc != be32_to_cpu(id.crc32))
+		return -EINVAL;
+
+	val = be16_to_cpu(id.product_id);
+	if (val != 0xffff)
+		env_set_hex("product_id", val);
+
+	val = be16_to_cpu(id.hw_rev);
+	if (val != 0xffff)
+		env_set_ulong("hw_rev", val);
+
+	if (is_valid_ethaddr(id.eth_addr))
+		eth_env_set_enetaddr("ethaddr", id.eth_addr);
+
+	return 0;
+}
+
 /*
  * Note this function gets called multiple times.
  * It must not make any changes to env variables which already exist.
@@ -743,6 +810,7 @@ int misc_init_r(void)
 		env_set("mmc_bootdev", "1");
 	}
 
+	parse_victron_eeprom();
 	setup_environment(gd->fdt_blob);
 
 #ifndef CONFIG_MACH_SUN9I
