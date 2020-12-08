@@ -653,7 +653,7 @@ static void parse_spl_header(const uint32_t spl_addr)
 	env_set_hex("fel_scriptaddr", spl->fel_script_address);
 }
 
-struct victron_eeprom_v1 {
+struct victron_eeprom_v2 {
 	u8 format_version;
 	__be16 product_id;
 	__be16 hw_rev;
@@ -662,12 +662,16 @@ struct victron_eeprom_v1 {
 	u8 wpa_psk[12];
 	u8 installer_version[24];
 	u8 eth_addr[6];
+	u8 mqtt_passwd[16];
+	u8 vrm_auth[8];
+	u8 paygo_key[16];
+	__be32 paygo_code;
 	__be32 crc32;
 } __packed;
 
 static int parse_victron_eeprom(void)
 {
-	struct victron_eeprom_v1 id;
+	struct victron_eeprom_v2 id;
 	unsigned int val;
 	int crc;
 	int err;
@@ -696,11 +700,11 @@ static int parse_victron_eeprom(void)
 		return err;
 #endif
 
-	if (id.format_version != 1)
+	if (id.format_version != 2)
 		return -EINVAL;
 
 	crc = crc32(0, (unsigned char *)&id,
-		    offsetof(struct victron_eeprom_v1, crc32));
+		    offsetof(struct victron_eeprom_v2, crc32));
 
 	if (crc != be32_to_cpu(id.crc32))
 		return -EINVAL;
