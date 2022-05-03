@@ -511,6 +511,9 @@ int board_late_init(void)
 	} else if ( (header.version[0] == 0x53) && (header.version[1] == 0x45) &&
 	            (header.version[2] == 0x30) && (header.version[3] == 0x41) ) {
 		setenv("board_rev", "SE0A");
+		safe_string[0] = header.config[1];
+		safe_string[1] = 0;
+		setenv("board_subrev", safe_string);
 	} else {
 		strncpy(safe_string, (char *)header.version, sizeof(header.version));
 		safe_string[sizeof(header.version)] = 0;
