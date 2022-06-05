@@ -19,7 +19,7 @@ ifeq ($(MTD_VERSION),old)
 HOST_EXTRACFLAGS += -DMTD_OLD
 endif
 
-always := fw_printenv
+always := fw_printenv libubootenv.a
 hostprogs-y := fw_printenv
 
 lib-y += fw_env.o \
@@ -27,6 +27,9 @@ lib-y += fw_env.o \
 	env_attr.o env_flags.o
 
 fw_printenv-objs := fw_env_main.o $(lib-y)
+
+$(obj)/libubootenv.a: $(addprefix $(obj)/,$(lib-y))
+	ar cr $@ $(lib-y)
 
 quiet_cmd_crosstools_strip = STRIP   $^
       cmd_crosstools_strip = $(STRIP) $^; touch $@
