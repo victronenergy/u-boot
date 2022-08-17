@@ -669,9 +669,34 @@ struct victron_eeprom_v2 {
 	__be32 crc32;
 } __packed;
 
+struct victron_eeprom_v3 {
+	u8 format_version;
+	__be16 product_id;
+	__be16 hw_rev;
+	u8 part_number[16];
+	u8 serial_number[12];
+	u8 wpa_psk[12];
+	u8 installer_version[24];
+	u8 eth_addr[6];
+	u8 mqtt_passwd[16];
+	u8 vrm_auth[8];
+	u8 paygo_key[16];
+	__be32 paygo_code;
+	u8 bluetooth_pin[6];
+	__be32 crc32;
+} __packed;
+
+union victron_eeprom {
+	u8 format_version;
+	struct victron_eeprom_v2 v2;
+	struct victron_eeprom_v3 v3;
+};
+
 static int parse_victron_eeprom(void)
 {
-	struct victron_eeprom_v2 id;
+	union victron_eeprom id;
+	unsigned int id_size;
+	unsigned int id_crc;
 	unsigned int val;
 	int crc;
 	int err;
@@ -700,25 +725,36 @@ static int parse_victron_eeprom(void)
 		return err;
 #endif
 
-	if (id.format_version != 2)
+	switch (id.format_version) {
+	case 2:
+		id_size = offsetof(struct victron_eeprom_v2, crc32);
+		id_crc = be32_to_cpu(id.v2.crc32);
+		break;
+
+	case 3:
+		id_size = offsetof(struct victron_eeprom_v3, crc32);
+		id_crc = be32_to_cpu(id.v3.crc32);
+		break;
+
+	default:
+		return -EINVAL;
+	}
+
+	crc = crc32(0, (unsigned char *)&id, id_size);
+
+	if (crc != id_crc)
 		return -EINVAL;
 
-	crc = crc32(0, (unsigned char *)&id,
-		    offsetof(struct victron_eeprom_v2, crc32));
-
-	if (crc != be32_to_cpu(id.crc32))
-		return -EINVAL;
-
-	val = be16_to_cpu(id.product_id);
+	val = be16_to_cpu(id.v2.product_id);
 	if (val != 0xffff)
 		env_set_hex("product_id", val);
 
-	val = be16_to_cpu(id.hw_rev);
+	val = be16_to_cpu(id.v2.hw_rev);
 	if (val != 0xffff)
 		env_set_ulong("hw_rev", val);
 
-	if (is_valid_ethaddr(id.eth_addr))
-		eth_env_set_enetaddr("ethaddr", id.eth_addr);
+	if (is_valid_ethaddr(id.v2.eth_addr))
+		eth_env_set_enetaddr("ethaddr", id.v2.eth_addr);
 
 	return 0;
 }
