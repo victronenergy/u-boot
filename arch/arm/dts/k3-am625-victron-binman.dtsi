@@ -141,8 +141,8 @@
 
 #ifdef CONFIG_TARGET_AM625_A53_EVM
 
-#define SPL_AM625_SANCLOUD_DTB "spl/dts/k3-am625-sancloud.dtb"
-#define AM625_SANCLOUD_DTB "u-boot.dtb"
+#define SPL_AM625_VICTRON_DTB "spl/dts/k3-am625-victron.dtb"
+#define AM625_VICTRON_DTB "u-boot.dtb"
 
 &binman {
 	ti-dm {
@@ -264,7 +264,7 @@
 				};
 
 				fdt-0 {
-					description = "k3-am625-sancloud";
+					description = "k3-am625-victron";
 					type = "flat_dt";
 					arch = "arm";
 					compression = "none";
@@ -273,7 +273,7 @@
 						keyfile = "custMpk.pem";
 					};
 					spl_am625_sk_dtb: blob-ext {
-						filename = SPL_AM625_SANCLOUD_DTB;
+						filename = SPL_AM625_VICTRON_DTB;
 					};
 
 				};
@@ -284,7 +284,7 @@
 				default = "conf-0";
 
 				conf-0 {
-					description = "k3-am625-sancloud";
+					description = "k3-am625-victron";
 					firmware = "atf";
 					loadables = "tee", "tifsstub-hs", "tifsstub-fs",
 					"tifsstub-gp", "dm", "spl";
@@ -306,7 +306,7 @@
 				};
 
 				fdt-0 {
-					description = "k3-am625-sancloud";
+					description = "k3-am625-victron";
 					type = "flat_dt";
 					arch = "arm";
 					compression = "none";
@@ -315,7 +315,7 @@
 						keyfile = "custMpk.pem";
 					};
 					am625_sk_dtb: blob-ext {
-						filename = AM625_SANCLOUD_DTB;
+						filename = AM625_VICTRON_DTB;
 					};
 					hash {
 						algo = "crc32";
@@ -327,7 +327,7 @@
 				default = "conf-0";
 
 				conf-0 {
-					description = "k3-am625-sancloud";
+					description = "k3-am625-victron";
 					firmware = "uboot";
 					loadables = "uboot";
 					fdt = "fdt-0";
@@ -391,12 +391,12 @@
 				};
 
 				fdt-0 {
-					description = "k3-am625-sancloud";
+					description = "k3-am625-victron";
 					type = "flat_dt";
 					arch = "arm";
 					compression = "none";
 					spl_am625_sk_dtb_unsigned: blob {
-						filename = SPL_AM625_SANCLOUD_DTB;
+						filename = SPL_AM625_VICTRON_DTB;
 					};
 				};
 			};
@@ -405,7 +405,7 @@
 				default = "conf-0";
 
 				conf-0 {
-					description = "k3-am625-sancloud";
+					description = "k3-am625-victron";
 					firmware = "atf";
 					loadables = "tee", "tifsstub-hs", "tifsstub-fs",
 						  "tifsstub-gp", "dm", "spl";
@@ -427,12 +427,12 @@
 				};
 
 				fdt-0 {
-					description = "k3-am625-sancloud";
+					description = "k3-am625-victron";
 					type = "flat_dt";
 					arch = "arm";
 					compression = "none";
 					am625_sk_dtb_unsigned: blob {
-						filename = AM625_SANCLOUD_DTB;
+						filename = AM625_VICTRON_DTB;
 					};
 					hash {
 						algo = "crc32";
@@ -444,7 +444,7 @@
 				default = "conf-0";
 
 				conf-0 {
-					description = "k3-am625-sancloud";
+					description = "k3-am625-victron";
 					firmware = "uboot";
 					loadables = "uboot";
 					fdt = "fdt-0";

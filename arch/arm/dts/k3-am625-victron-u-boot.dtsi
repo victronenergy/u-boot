@@ -1,0 +1,134 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Copyright (C) 2022-2023 Texas Instruments Incorporated - https://www.ti.com/
+ * Copyright (C) 2023-2024 Marc Murphy, SanCloud
+ */
+
+#include "k3-am625-victron-binman.dtsi"
+
+/ {
+	chosen {
+		tick-timer = &timer1;
+	};
+
+	memory@80000000 {
+		bootph-pre-ram;
+	};
+};
+
+&cbass_main {
+	bootph-pre-ram;
+
+	timer1: timer@2400000 {
+		compatible = "ti,omap5430-timer";
+		reg = <0x00 0x2400000 0x00 0x80>;
+		ti,timer-alwon;
+		clock-frequency = <25000000>;
+		bootph-pre-ram;
+	};
+};
+
+&dmss {
+	bootph-pre-ram;
+};
+
+&main_bcdma {
+	bootph-pre-ram;
+};
+
+&main_pktdma {
+	bootph-pre-ram;
+};
+
+&secure_proxy_main {
+	bootph-pre-ram;
+};
+
+&k3_pds {
+	bootph-pre-ram;
+};
+
+&k3_clks {
+	bootph-pre-ram;
+};
+
+&k3_reset {
+	bootph-pre-ram;
+};
+
+&wkup_conf {
+	bootph-pre-ram;
+};
+
+&chipid {
+	bootph-pre-ram;
+};
+
+&wkup_uart0 {
+	bootph-pre-ram;
+};
+
+&main_pmx0 {
+	bootph-pre-ram;
+};
+
+&main_uart0 {
+	bootph-pre-ram;
+};
+
+&main_uart0_pins {
+	bootph-pre-ram;
+};
+
+&cbass_mcu {
+	bootph-pre-ram;
+};
+
+&cbass_wakeup {
+	bootph-pre-ram;
+};
+
+&mcu_pmx0 {
+	bootph-pre-ram;
+};
+
+&main_i2c0 {
+	bootph-pre-ram;
+};
+
+&main_i2c0_pins {
+	bootph-pre-ram;
+};
+
+&main_gpio0 {
+	bootph-pre-ram;
+};
+
+&main_gpio1 {
+	bootph-pre-ram;
+};
+
+&sdhci0 {
+	bootph-pre-ram;
+};
+
+&sdhci1 {
+	bootph-pre-ram;
+	sdhci-caps-mask = <0x00000007 0x00000000>;
+};
+
+&sdhci0_pins {
+	bootph-pre-ram;
+};
+
+&sdhci1_pins {
+	bootph-pre-ram;
+};
+
+&dmsc {
+	bootph-pre-ram;
+	k3_sysreset: sysreset-controller {
+		compatible = "ti,sci-sysreset";
+		bootph-pre-ram;
+	};
+};
