@@ -123,8 +123,12 @@
 	"kernel_addr_r=0x00080000\0" \
 	"set_args=fdt addr ${fdt_addr} && fdt get value bootargs /chosen bootargs && " \
 		"setenv bootargs \"${bootargs} root=${mmcroot} rootwait\"\0" \
-	"set_root=if test \"${version}\" = 2; then setenv bootpart 0:3; setenv mmcroot /dev/mmcblk0p3; " \
-		"else setenv bootpart 0:2; setenv mmcroot /dev/mmcblk0p2; fi\0" \
+	"set_root=fdt addr ${fdt_addr} && fdt get value partition /chosen/bootloader partition; " \
+		"if test \"$partition\" = \"0x00000002\"; then " \
+			"setenv bootpart 0:5; setenv mmcroot /dev/mmcblk0p5; " \
+		"else " \
+			"setenv bootpart 0:6; setenv mmcroot /dev/mmcblk0p6; " \
+		"fi\0" \
 	"load=ext2load mmc ${bootpart} ${kernel_addr_r} /boot/zImage\0" \
 	"do_boot=bootz ${kernel_addr_r} - ${fdt_addr}\0"
 
