@@ -94,6 +94,17 @@ int dram_init(void)
 #ifdef CONFIG_BOARD_LATE_INIT
 int board_late_init(void)
 {
+	u32 boot_device = get_boot_device();
+
+	switch (boot_device) {
+	case BOOT_DEVICE_MMC1:
+		env_set_ulong("mmcdev", 0);
+		break;
+	case BOOT_DEVICE_MMC2:
+		env_set_ulong("mmcdev", 1);
+		break;
+	}
+
 	ti_set_fdt_env(NULL, NULL);
 	return 0;
 }
