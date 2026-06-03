@@ -18,6 +18,7 @@
 	"board_47504556=setenv fdtfile sun8i-h3-nanopi-paygo.dtb\0" \
 	"board_3456584d=setenv fdtfile sun8i-h3-nanopi-v4-smart-hub.dtb\0" \
 	"board_524b4556=setenv fdtfile sun8i-h3-sinh3-ekrano.dtb\0" \
+	"board_41524b56=setenv fdtfile sun8i-h3-sinh3-ekrano-a10.dtb\0" \
 	"board_43554e56=setenv fdtfile sun8i-h3-sinh3-nucleo.dtb\0"
 
 #endif
