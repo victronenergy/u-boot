@@ -101,6 +101,7 @@ int board_late_init(void)
 		env_set_ulong("mmcdev", 0);
 		break;
 	case BOOT_DEVICE_MMC2:
+		env_set_default(NULL, 0);
 		env_set_ulong("mmcdev", 1);
 		break;
 	}
