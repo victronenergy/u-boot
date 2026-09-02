@@ -12,9 +12,12 @@
 	"board_39504d56=setenv fdtfile sun8i-h3-nanopi-easysolar-a9.dtb; setenv model MultiPlus-II\0" \
 	"board_41534556=setenv fdtfile sun8i-h3-nanopi-easysolar-a10.dtb\0" \
 	"board_41504d56=setenv fdtfile sun8i-h3-nanopi-easysolar-a10.dtb; setenv model MultiPlus-II\0" \
+	"board_62454556=setenv fdtfile sun8i-h3-nanopi-easysolar-a14b.dtb\0" \
+	"board_62454d56=setenv fdtfile sun8i-h3-nanopi-easysolar-a14b.dtb; setenv model MultiPlus-II\0" \
 	"board_584d4556=setenv fdtfile sun8i-h3-nanopi-maxi-gx.dtb\0" \
 	"board_39584d56=setenv fdtfile sun8i-h3-nanopi-maxi-gx-a9.dtb\0" \
 	"board_41584d56=setenv fdtfile sun8i-h3-nanopi-maxi-gx-a10.dtb\0" \
+	"board_62455856=setenv fdtfile sun8i-h3-nanopi-maxi-gx-a14b.dtb\0" \
 	"board_47504556=setenv fdtfile sun8i-h3-nanopi-paygo.dtb\0" \
 	"board_3456584d=setenv fdtfile sun8i-h3-nanopi-v4-smart-hub.dtb\0" \
 	"board_524b4556=setenv fdtfile sun8i-h3-sinh3-ekrano.dtb\0" \
